@@ -1,1 +1,135 @@
-print("hello world")
+-- LocalScript: Monster Hunter Powers (Pune-l în StarterPlayerScripts)
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local head = character:WaitForChild("Head")
+local rootPart = character:WaitForChild("HumanoidRootPart")
+
+-- 🔥 CONFIGURARE  
+local LASER_COOLDOWN = 3  -- secunde  
+local SHIELD_DURATION = 5 -- secunde  
+local LASER_DAMAGE = 25   -- damage la hit  
+
+local canShootLaser = true
+local isShieldActive = false
+
+-- 🌟 FUNCȚIE LASER  
+local function shootLaser()
+    if not canShootLaser then return end
+    canShootLaser = false
+
+    -- 🔴 Crează laserul
+    local laser = Instance.new("Part")
+    laser.Name = "EyeLaser"
+    laser.Size = Vector3.new(0.2, 0.2, 10)
+    laser.Color = Color3.fromRGB(255, 0, 0)
+    laser.Material = Enum.Material.Neon
+    laser.Anchored = true
+    laser.CanCollide = false
+
+    -- 🔥 Efect de lumină
+    local pointLight = Instance.new("PointLight")
+    pointLight.Brightness = 10
+    pointLight.Range = 15
+    pointLight.Color = Color3.fromRGB(255, 50, 50)
+    pointLight.Parent = laser
+
+    -- 🎯 Poziționare laser (din ochi)
+    local attachment = Instance.new("Attachment")
+    attachment.Parent = head
+    attachment.Position = Vector3.new(0, 0, -1) -- În fața ochilor
+
+    laser.CFrame = CFrame.lookAt(
+        head.Position + (head.CFrame.LookVector * 2),
+        head.Position + (head.CFrame.LookVector * 100)
+    )
+    laser.Parent = workspace
+
+    -- 💥 Detectare hit
+    local hit = workspace:FindPartOnRay(Ray.new(
+        head.Position,
+        head.CFrame.LookVector * 100
+    ))
+
+    if hit and hit.Parent:FindFirstChild("Humanoid") then
+        hit.Parent.Humanoid:TakeDamage(LASER_DAMAGE)
+    end
+
+    -- 🌀 Animație laser (dispare în 0.5 secunde)
+    TweenService:Create(laser, TweenInfo.new(0.5), {
+        Transparency = 1,
+        Size = Vector3.new(0.5, 0.5, laser.Size.Z)
+    }):Play()
+
+    wait(0.5)
+    laser:Destroy()
+    attachment:Destroy()
+
+    -- ⏳ Cooldown laser
+    wait(LASER_COOLDOWN)
+    canShootLaser = true
+end
+
+-- 🛡️ FUNCȚIE SCUT DE ENERGIE  
+local function activateShield()
+    if isShieldActive then return end
+    isShieldActive = true
+
+    -- 🔵 Crează scutul
+    local shield = Instance.new("Part")
+    shield.Name = "EnergyShield"
+    shield.Shape = Enum.PartType.Ball
+    shield.Size = Vector3.new(8, 8, 8)
+    shield.Transparency = 0.7
+    shield.Color = Color3.fromRGB(0, 150, 255)
+    shield.Material = Enum.Material.Neon
+    shield.Anchored = false
+    shield.CanCollide = false
+    shield.Parent = character
+
+    -- 🔗 Atașează scutul la jucător
+    local weld = Instance.new("WeldConstraint")
+    weld.Part0 = rootPart
+    weld.Part1 = shield
+    weld.Parent = shield
+
+    -- 💡 Efect de lumină
+    local pointLight = Instance.new("PointLight")
+    pointLight.Brightness = 5
+    pointLight.Range = 12
+    pointLight.Color = Color3.fromRGB(0, 200, 255)
+    pointLight.Parent = shield
+
+    -- 🌀 Animație pulsare scut
+    local pulseTween = TweenService:Create(shield, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
+        Size = Vector3.new(9, 9, 9)
+    })
+    pulseTween:Play()
+
+    -- ⏳ Dezactivează scutul după SHIELD_DURATION secunde
+    wait(SHIELD_DURATION)
+    pulseTween:Cancel()
+    shield:Destroy()
+    isShieldActive = false
+end
+
+-- 🎮 INPUT DE TASTE  
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+
+    if input.KeyCode == Enum.KeyCode.E then
+        shootLaser()
+    elseif input.KeyCode == Enum.KeyCode.R then
+        activateShield()
+    end
+end)
+
+-- 📢 MESAJ DE BUN VENIT  
+print("🔫 Vânător de Monștri activat!")
+print("🔴 Apasă [E] pentru LASER DIN OCHI")
+print("🔵 Apasă [R] pentru SCUT DE ENERGIE")
