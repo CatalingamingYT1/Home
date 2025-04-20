@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>😂 YOU GOT PRANKED! 😂</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(-45deg, #ff00cc, #3333ff, #00ffcc, #ffcc00);
+            background-size: 400% 400%;
+            animation: gradientBG 8s ease infinite;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        h1 {
+            font-size: 5em;
+            color: white;
+            text-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+            animation: bounce 0.8s infinite alternate, colorChange 5s infinite;
+            margin-bottom: 30px;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-25px); }
+        }
+
+        @keyframes colorChange {
+            0% { color: #ff00cc; }
+            25% { color: #3333ff; }
+            50% { color: #00ffcc; }
+            75% { color: #ffcc00; }
+            100% { color: #ff00cc; }
+        }
+
+        .emoji {
+            font-size: 3em;
+            position: absolute;
+            animation: float 5s linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+
+        #fakeButton {
+            padding: 15px 40px;
+            font-size: 1.5em;
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            border: 3px dashed white;
+            border-radius: 50px;
+            cursor: pointer;
+            animation: pulse 1.5s infinite, rotate 4s infinite;
+            transition: all 0.3s;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            50% { transform: rotate(0deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        #fakeButton:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: scale(1.1) rotate(10deg);
+        }
+
+        .message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+            display: none;
+            animation: popIn 0.5s;
+        }
+
+        @keyframes popIn {
+            from { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <h1>😂 YOU GOT PRANKED! 😂</h1>
+    <button id="fakeButton">CLICK ME! (JOKE!)</button>
+
+    <div class="message" id="message">
+        <h2>🤣 HAHA! GOT YOU! 🤣</h2>
+        <p>This is just a harmless prank! Relax! 😜</p>
+    </div>
+
+    <audio id="laughSound" src="https://www.soundjay.com/human/sounds/laugh-01.mp3" preload="auto"></audio>
+    <audio id="boingSound" src="https://www.soundjay.com/misc/sounds/boing-01.mp3" preload="auto"></audio>
+
+    <script>
+        // Sunet de râs la încărcare
+        window.onload = function() {
+            document.getElementById('laughSound').play();
+            
+            // Crează emoji-uri care plutesc
+            setInterval(createEmoji, 500);
+        };
+
+        // Butonul fals
+        document.getElementById('fakeButton').addEventListener('click', function() {
+            document.getElementById('boingSound').play();
+            this.style.animation = 'none';
+            this.style.transform = 'scale(0.5) rotate(720deg)';
+            this.style.opacity = '0';
+            
+            setTimeout(() => {
+                document.getElementById('message').style.display = 'block';
+            }, 800);
+        });
+
+        // Funcția pentru emoji-uri plutitoare
+        function createEmoji() {
+            const emojis = ["😂", "🤣", "😜", "🎉", "🤪", "👻", "🍌", "🦄"];
+            const emoji = document.createElement('div');
+            emoji.className = 'emoji';
+            emoji.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+            emoji.style.left = Math.random() * 100 + 'vw';
+            emoji.style.animationDuration = Math.random() * 3 + 3 + 's';
+            document.body.appendChild(emoji);
+            
+            // Șterge emoji-ul după ce dispare
+            setTimeout(() => {
+                emoji.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
