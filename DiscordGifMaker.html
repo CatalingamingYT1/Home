@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Devil Banner Maker</title>
+    <style>
+        /* Reset și variabile */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        :root {
+            --devil-red: #FF0000;
+            --devil-dark: #330000;
+            --devil-glowing: #FF3333;
+            --devil-accent: #FF6666;
+            --devil-text: #FFFFFF;
+        }
+        
+        /* Stiluri generale */
+        body {
+            background: linear-gradient(135deg, #000000, var(--devil-dark));
+            color: var(--devil-text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        /* Header cu animație devil */
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            color: var(--devil-red);
+            text-shadow: 0 0 10px var(--devil-glowing), 0 0 20px var(--devil-red);
+            animation: devilGlow 2s infinite alternate;
+            position: relative;
+            z-index: 2;
+        }
+        
+        @keyframes devilGlow {
+            0% { text-shadow: 0 0 10px var(--devil-glowing), 0 0 20px var(--devil-red); }
+            100% { text-shadow: 0 0 20px var(--devil-glowing), 0 0 40px var(--devil-red), 0 0 60px #FF0000; }
+        }
+        
+        /* Panou principal */
+        .main-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            width: 100%;
+        }
+        
+        /* Editor banner */
+        .banner-editor {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(51, 0, 0, 0.7);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 0 20px var(--devil-red);
+            border: 1px solid var(--devil-red);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .banner-editor::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 0, 0, 0) 0%,
+                rgba(255, 0, 0, 0) 37%,
+                rgba(255, 51, 51, 0.8) 45%,
+                rgba(255, 0, 0, 0) 50%,
+                rgba(255, 0, 0, 0) 100%
+            );
+            transform: rotate(30deg);
+            animation: devilShine 5s infinite;
+        }
+        
+        @keyframes devilShine {
+            0% { left: -50%; }
+            100% { left: 150%; }
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--devil-accent);
+            font-weight: bold;
+            text-shadow: 0 0 5px var(--devil-red);
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: 2px solid var(--devil-red);
+            background: rgba(0, 0, 0, 0.7);
+            color: var(--devil-text);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            box-shadow: 0 0 10px var(--devil-red);
+            border-color: var(--devil-glowing);
+        }
+        
+        /* Butoane devil */
+        .btn {
+            background: linear-gradient(to bottom, var(--devil-red), #CC0000);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-shadow: 0 0 5px #000;
+            box-shadow: 0 0 10px var(--devil-red);
+            z-index: 2;
+        }
+        
+        .btn:hover {
+            background: linear-gradient(to bottom, #FF3333, #990000);
+            box-shadow: 0 0 20px var(--devil-red);
+            transform: translateY(-2px);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Previzualizare banner */
+        .banner-preview {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .preview-container {
+            width: 680px;
+            height: 240px;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0 30px var(--devil-red);
+            border: 3px solid var(--devil-red);
+            transition: all 0.3s ease;
+        }
+        
+        .preview-container:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 40px var(--devil-glowing);
+        }
+        
+        .banner-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .banner-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.4);
+        }
+        
+        .bot-name {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--devil-text);
+            text-shadow: 0 0 10px var(--devil-red), 0 0 20px #FF0000;
+            animation: devilFloat 3s infinite ease-in-out;
+        }
+        
+        @keyframes devilFloat {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+        
+        /* Stiluri pentru temele devil */
+        .devil-theme-1 {
+            background: linear-gradient(45deg, #330000, #FF0000, #330000);
+            background-size: 200% 200%;
+            animation: devilPulse 5s infinite;
+        }
+        
+        @keyframes devilPulse {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .devil-theme-2 {
+            background: 
+                radial-gradient(circle at 20% 30%, #FF0000, transparent 40%),
+                radial-gradient(circle at 80% 70%, #990000, transparent 40%),
+                linear-gradient(#330000, #000000);
+            animation: devilEyes 4s infinite alternate;
+        }
+        
+        @keyframes devilEyes {
+            0% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+        
+        .devil-theme-3 {
+            background: 
+                linear-gradient(135deg, #330000 25%, transparent 25%) -50px 0,
+                linear-gradient(225deg, #FF0000 25%, transparent 25%) -50px 0,
+                linear-gradient(315deg, #330000 25%, transparent 25%),
+                linear-gradient(45deg, #FF0000 25%, transparent 25%);
+            background-size: 100px 100px;
+            animation: devilMove 10s infinite linear;
+        }
+        
+        @keyframes devilMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 100px 100px; }
+        }
+        
+        .devil-theme-4 {
+            background: linear-gradient(to right, #000000, #330000, #000000);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .devil-theme-4::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(90deg, 
+                    transparent 45%, 
+                    rgba(255, 0, 0, 0.3) 50%, 
+                    transparent 55%);
+            animation: devilScan 3s infinite linear;
+        }
+        
+        @keyframes devilScan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+        
+        .devil-theme-5 {
+            background: #330000;
+            background-image: 
+                radial-gradient(circle at center, #FF0000 0%, transparent 70%),
+                repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 10px,
+                    #FF0000 10px,
+                    #FF0000 20px
+                );
+            animation: devilRotate 20s infinite linear;
+        }
+        
+        @keyframes devilRotate {
+            0% { background-position: 0 0; }
+            100% { background-position: 100px 100px; }
+        }
+        
+        .devil-theme-6 {
+            background: #000000;
+            background-image: 
+                radial-gradient(circle at 50% 50%, #FF0000 0%, transparent 70%),
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(255, 0, 0, 0.2),
+                    rgba(255, 0, 0, 0.2) 1px,
+                    transparent 1px,
+                    transparent 10px
+                );
+            animation: devilFlicker 0.5s infinite alternate;
+        }
+        
+        @keyframes devilFlicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+            20%, 22%, 24%, 55% { opacity: 0.5; }
+        }
+        
+        .devil-theme-7 {
+            background: linear-gradient(45deg, #000000, #330000, #000000);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .devil-theme-7::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(
+                    90deg,
+                    rgba(255, 0, 0, 0) 0%,
+                    rgba(255, 0, 0, 0.3) 50%,
+                    rgba(255, 0, 0, 0) 100%
+                );
+            animation: devilSwipe 2s infinite linear;
+        }
+        
+        @keyframes devilSwipe {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .devil-theme-8 {
+            background: #000000;
+            background-image: 
+                radial-gradient(circle at 30% 30%, #FF0000 0%, transparent 30%),
+                radial-gradient(circle at 70% 70%, #990000 0%, transparent 30%);
+            animation: devilPulse 1s infinite alternate;
+        }
+        
+        .devil-theme-9 {
+            background: 
+                conic-gradient(
+                    from 45deg,
+                    #FF0000,
+                    #990000,
+                    #330000,
+                    #000000,
+                    #330000,
+                    #990000,
+                    #FF0000
+                );
+            animation: devilSpin 5s infinite linear;
+        }
+        
+        @keyframes devilSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .devil-theme-10 {
+            background: #000000;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .devil-theme-10::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at center, transparent 60%, #FF0000 100%),
+                repeating-linear-gradient(
+                    45deg,
+                    rgba(255, 0, 0, 0.1),
+                    rgba(255, 0, 0, 0.1) 1px,
+                    transparent 1px,
+                    transparent 10px
+                );
+            animation: devilHeartbeat 1s infinite alternate;
+        }
+        
+        @keyframes devilHeartbeat {
+            0% { transform: scale(1); opacity: 0.7; }
+            100% { transform: scale(1.05); opacity: 1; }
+        }
+        
+        /* Efecte de cornițe devil */
+        .devil-horns {
+            position: absolute;
+            width: 100%;
+            height: 20px;
+            top: -10px;
+            left: 0;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none;
+        }
+        
+        .devil-horns::before, .devil-horns::after {
+            content: '';
+            width: 40px;
+            height: 40px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23FF0000' d='M50 0 L100 50 L80 70 L50 40 L20 70 L0 50 Z'/%3E%3C/svg%3E") no-repeat;
+            background-size: contain;
+            filter: drop-shadow(0 0 5px var(--devil-red));
+            animation: devilHornGlow 0.5s infinite alternate;
+        }
+        
+        @keyframes devilHornGlow {
+            0% { opacity: 0.7; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.1); }
+        }
+        
+        /* Butoane download */
+        .download-options {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        /* Responsiv */
+        @media (max-width: 768px) {
+            .main-panel {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .preview-container {
+                width: 100%;
+                height: 180px;
+            }
+            
+            .bot-name {
+                font-size: 2rem;
+            }
+        }
+
+        /* Loading indicator */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--devil-red);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--devil-text);
+            font-size: 1.2rem;
+            text-shadow: 0 0 5px var(--devil-red);
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Se generează GIF-ul. Te rugăm să aștepți...</div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>DEVIL BANNER MAKER</h1>
+            <p>Creează cel mai TARE banner devil pentru botul tău Discord!</p>
+        </header>
+        
+        <div class="main-panel">
+            <div class="banner-editor">
+                <div class="devil-horns"></div>
+                <h2 style="color: var(--devil-red); text-shadow: 0 0 5px #FF0000;">EDITOR DEVIL</h2>
+                
+                <div class="form-group">
+                    <label for="bot-name">Nume Bot</label>
+                    <input type="text" id="bot-name" placeholder="Introdu numele botului devil" value="DEVILBOT">
+                </div>
+                
+                <div class="form-group">
+                    <label for="devil-theme">Stil Devil</label>
+                    <select id="devil-theme">
+                        <option value="1">Devil Blood Pulse</option>
+                        <option value="2">Devil Eyes Glow</option>
+                        <option value="3">Devil Geometric</option>
+                        <option value="4">Devil Scanner</option>
+                        <option value="5">Devil Hell Grid</option>
+                        <option value="6">Devil Flicker</option>
+                        <option value="7">Devil Swipe</option>
+                        <option value="8">Devil Dual Eyes</option>
+                        <option value="9">Devil Spiral</option>
+                        <option value="10">Devil Heartbeat</option>
+                    </select>
+                </div>
+                
+                <button id="generate-btn" class="btn">
+                    GENEREAZĂ BANNERUL DEVIL
+                </button>
+            </div>
+            
+            <div class="banner-preview">
+                <h2 style="color: var(--devil-red); text-shadow: 0 0 5px #FF0000;">PREVIZUALIZARE DEVIL</h2>
+                
+                <div class="preview-container" id="preview-container">
+                    <div class="banner-image devil-theme-1" id="banner-bg"></div>
+                    <div class="banner-overlay">
+                        <div class="bot-name" id="preview-name">DEVILBOT</div>
+                    </div>
+                    <div class="devil-horns"></div>
+                </div>
+                
+                <div class="download-options">
+                    <button id="download-png" class="btn">DESCARCĂ PNG</button>
+                    <button id="download-jpg" class="btn">DESCARCĂ JPG</button>
+                    <button id="download-gif" class="btn">DESCARCĂ GIF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gif.js/dist/gif.js"></script>
+    <script>
+        // Inițializare la încărcarea paginii
+        document.addEventListener('DOMContentLoaded', function() {
+            // Actualizează previzualizarea când se schimbă inputurile
+            function updatePreview() {
+                const botName = document.getElementById('bot-name').value;
+                const devilTheme = document.getElementById('devil-theme').value;
+                
+                // Actualizează numele
+                document.getElementById('preview-name').textContent = botName;
+                
+                // Actualizează tema devil
+                const bannerBg = document.getElementById('banner-bg');
+                bannerBg.className = 'banner-image devil-theme-' + devilTheme;
+            }
+            
+            // Funcție pentru descărcare imagine
+            function downloadBanner(format) {
+                const previewContainer = document.getElementById('preview-container');
+                
+                // Folosim html2canvas pentru a captura elementul
+                html2canvas(previewContainer, {
+                    scale: 2,
+                    logging: false,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: null
+                }).then(canvas => {
+                    // Crează un link de descărcare
+                    const link = document.createElement('a');
+                    let filename = 'devil-banner-' + document.getElementById('bot-name').value.toLowerCase().replace(/\s+/g, '-');
+                    
+                    if (format === 'png') {
+                        link.download = filename + '.png';
+                        link.href = canvas.toDataURL('image/png');
+                    } else if (format === 'jpg') {
+                        link.download = filename + '.jpg';
+                        link.href = canvas.toDataURL('image/jpeg', 0.9);
+                    }
+                    
+                    // Trigger click pe link pentru descărcare
+                    link.click();
+                });
+            }
+            
+            // Funcție pentru creare și descărcare GIF
+            async function downloadGif() {
+                const loading = document.getElementById('loading');
+                loading.style.display = 'flex';
+                
+                const previewContainer = document.getElementById('preview-container');
+                const botName = document.getElementById('bot-name').value;
+                
+                // Crează GIF
+                const gif = new GIF({
+                    workers: 4,
+                    quality: 15,
+                    width: previewContainer.offsetWidth,
+                    height: previewContainer.offsetHeight,
+                    workerScript: 'https://cdn.jsdelivr.net/npm/gif.js/dist/gif.worker.js'
+                });
+                
+                // Număr de cadre și întârziere
+                const frameCount = 20;
+                const delay = 100; // ms între cadre
+                
+                // Captură cadrele
+                for (let i = 0; i < frameCount; i++) {
+                    await new Promise(resolve => {
+                        html2canvas(previewContainer, {
+                            scale: 1,
+                            logging: false,
+                            useCORS: true,
+                            allowTaint: true,
+                            backgroundColor: null
+                        }).then(canvas => {
+                            gif.addFrame(canvas, {delay: delay});
+                            setTimeout(resolve, 50);
+                        });
+                    });
+                }
+                
+                // Finalizează GIF
+                gif.on('finished', function(blob) {
+                    const link = document.createElement('a');
+                    link.download = 'devil-banner-' + botName.toLowerCase().replace(/\s+/g, '-') + '.gif';
+                    link.href = URL.createObjectURL(blob);
+                    link.click();
+                    
+                    loading.style.display = 'none';
+                });
+                
+                gif.render();
+            }
+            
+            // Ascultători de evenimente
+            document.getElementById('bot-name').addEventListener('input', updatePreview);
+            document.getElementById('devil-theme').addEventListener('change', updatePreview);
+            
+            document.getElementById('generate-btn').addEventListener('click', function() {
+                alert('Bannerul DEVIL a fost generat! Poți descărca imaginea acum.');
+            });
+            
+            document.getElementById('download-png').addEventListener('click', function() {
+                downloadBanner('png');
+            });
+            
+            document.getElementById('download-jpg').addEventListener('click', function() {
+                downloadBanner('jpg');
+            });
+            
+            document.getElementById('download-gif').addEventListener('click', function() {
+                downloadGif();
+            });
+            
+            // Inițializare previzualizare
+            updatePreview();
+            
+            // Animatie random pentru nume
+            setInterval(function() {
+                const nameElement = document.getElementById('preview-name');
+                const animations = ['devilFloat', 'devilGlow'];
+                const randomAnim = animations[Math.floor(Math.random() * animations.length)];
+                
+                nameElement.style.animation = 'none';
+                void nameElement.offsetWidth; // Trigger reflow
+                nameElement.style.animation = `${randomAnim} 3s infinite ease-in-out`;
+            }, 5000);
+        });
+    </script>
+</body>
+</html>
