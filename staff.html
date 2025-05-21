@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Application</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* (Păstrează tot CSS-ul anterior) */
+    </style>
+</head>
+<body>
+    <!-- (Păstrează tot HTML-ul anterior) -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('applicationForm');
+            const verifyBtn = document.getElementById('verifyUser');
+            const discordUsernameInput = document.getElementById('discordUsername');
+            const verificationResult = document.getElementById('verificationResult');
+            const submitBtn = document.getElementById('submitBtn');
+            const successMessage = document.getElementById('successMessage');
+            const formContainer = document.querySelector('.form-container');
+            
+            // Discord username verification
+            verifyBtn.addEventListener('click', function() {
+                const username = discordUsernameInput.value.trim();
+                
+                if (!username) {
+                    verificationResult.textContent = 'Please enter a Discord username';
+                    verificationResult.className = 'verification-result invalid';
+                    return;
+                }
+                
+                const discordRegex = /^(?:(?<username>[^#@:]{2,32})#(?<discriminator>\d{4})|(?<newUsername>[^#@:]{2,32})$/;
+                
+                if (!discordRegex.test(username)) {
+                    verificationResult.textContent = 'Invalid Discord username format';
+                    verificationResult.className = 'verification-result invalid';
+                    return;
+                }
+                
+                verificationResult.textContent = 'Verifying...';
+                verificationResult.className = 'verification-result';
+                
+                setTimeout(() => {
+                    const isVerified = Math.random() > 0.3;
+                    
+                    if (isVerified) {
+                        verificationResult.textContent = 'Username verified ✔';
+                        verificationResult.className = 'verification-result valid';
+                    } else {
+                        verificationResult.textContent = 'Username not found. Please check and try again.';
+                        verificationResult.className = 'verification-result invalid';
+                    }
+                }, 1500);
+            });
+            
+            // Form submission
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+                
+                submitBtn.classList.add('loading');
+                
+                const formData = {
+                    discordUsername: discordUsernameInput.value.trim(),
+                    age: document.getElementById('age').value,
+                    gender: document.querySelector('input[name="gender"]:checked').value,
+                    reason: document.getElementById('reason').value.trim(),
+                    timestamp: new Date().toISOString()
+                };
+                
+                try {
+                    // Trimite datele către webhook-ul Discord
+                    const response = await sendToDiscordWebhook(formData);
+                    
+                    if (response.ok) {
+                        showSuccess();
+                    } else {
+                        throw new Error('Failed to send to Discord');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('A apărut o eroare la trimiterea aplicației. Te rugăm să încerci mai târziu.');
+                    submitBtn.classList.remove('loading');
+                }
+            });
+            
+            async function sendToDiscordWebhook(formData) {
+                const webhookURL = 'https://discord.com/api/webhooks/1371480783184728194/t0WJXmAV9kLZX3Utv7XoA8G2-gnp6FR34gT2baZmXQ86rQ_Tdephvmd0j8NzhAPnBHBL';
+                
+                const embed = {
+                    title: "✍️ New Staff Application",
+                    color: 0x5865F2,
+                    fields: [
+                        { name: "🔹 Discord Username", value: formData.discordUsername, inline: true },
+                        { name: "🔹 Age", value: formData.age, inline: true },
+                        { name: "🔹 Gender", value: formData.gender, inline: true },
+                        { name: "📝 Reason for Applying", value: formData.reason || "*Not provided*", inline: false },
+                        { name: "⏰ Submitted At", value: new Date(formData.timestamp).toLocaleString(), inline: false }
+                    ],
+                    footer: { text: "Staff Application System" },
+                    timestamp: new Date().toISOString()
+                };
+                
+                const payload = {
+                    username: "Application Bot",
+                    avatar_url: "https://cdn.discordapp.com/attachments/123456789012345678/123456789012345678/staff-icon.png",
+                    embeds: [embed]
+                };
+                
+                return await fetch(webhookURL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            }
+            
+            function showSuccess() {
+                submitBtn.classList.remove('loading');
+                formContainer.classList.add('hidden');
+                successMessage.classList.add('show');
+                
+                setTimeout(() => {
+                    form.reset();
+                    verificationResult.textContent = '';
+                    verificationResult.className = 'verification-result';
+                    formContainer.classList.remove('hidden');
+                    successMessage.classList.remove('show');
+                }, 5000);
+            }
+        });
+    </script>
+</body>
+</html>
